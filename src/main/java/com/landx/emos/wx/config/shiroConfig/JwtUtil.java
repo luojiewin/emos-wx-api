@@ -1,6 +1,11 @@
 package com.landx.emos.wx.config.shiroConfig;
 
 
+/**
+ * jwt工具类，提供tocken创建、token验证，token中获取用户id三个方法
+ *
+ */
+
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import com.auth0.jwt.JWT;
@@ -8,13 +13,13 @@ import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.landx.emos.wx.util.R;
 import com.landx.emos.wx.util.exception.EmosException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+
 
 @Component
 @Slf4j
@@ -28,6 +33,11 @@ public class JwtUtil {
     @Value("${emos.jwt.expire}")
     private int expire;
 
+    /**
+     * 创建token
+     * @param userId
+     * @return
+     */
     public String createToken(int userId) {
         Date date = DateUtil.offset(new Date(), DateField.DAY_OF_YEAR, expire).toJdkDate();
         Algorithm algorithm = Algorithm.HMAC256(secret); //创建加密算法对象
@@ -36,7 +46,11 @@ public class JwtUtil {
         return token;
     }
 
-
+    /**
+     * 获取用户id
+     * @param token
+     * @return
+     */
     public int getUserId(String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);
@@ -46,6 +60,7 @@ public class JwtUtil {
         }
     }
 
+    //验证token
     public void verifierToken(String token) {
         Algorithm algorithm = Algorithm.HMAC256(secret); //创建加密算法对象
         JWTVerifier verifier = JWT.require(algorithm).build();
